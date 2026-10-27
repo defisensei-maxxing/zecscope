@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --color-zec: #f4b728;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
