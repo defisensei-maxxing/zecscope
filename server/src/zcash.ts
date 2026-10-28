@@ -34,7 +34,33 @@ export async function init() {
   });
 
   timer = setInterval(() => { void syncOnce(); }, config.syncIntervalMs);
+  await loadDemo();
   void syncOnce();
+}
+
+let demoWatchId: string | null = null;
+
+/** Import the configured demo wallet once. With filesystem storage it survives restarts, and its
+ * already-scanned history stays readable even if live scanning later fails (e.g. after NU7). */
+async function loadDemo() {
+  const demo = config.demo;
+  if (!demo) return;
+  try {
+    const existing = (await wallet.accounts.list()).find(a => a.name === demo.label);
+    if (existing) {
+      demoWatchId = existing.id;
+      keyPreviews.set(existing.id, `${demo.ufvk.slice(0, 14)}…${demo.ufvk.slice(-8)}`);
+      return;
+    }
+    const added = await addWatch({ ufvk: demo.ufvk, label: demo.label, birthdayHeight: demo.birthdayHeight });
+    demoWatchId = added.id;
+  } catch (error) {
+    lastSyncError = `DEMO_IMPORT_FAILED: ${errorCode(error)}`;
+  }
+}
+
+export function getDemoWatchId() {
+  return demoWatchId;
 }
 
 export async function shutdown() {
@@ -62,14 +88,25 @@ export function syncOnce(): Promise<void> {
 }
 
 export async function getHealth() {
-  const [tip, server] = await Promise.all([light.getTip(), light.getServerInfo()]);
-  return {
+  const base = {
     network: config.network,
     endpoint: config.endpoint,
     storage: config.storage,
-    tipHeight: tip.height,
-    server: { vendor: server.vendor, version: server.version, network: server.networkIdentity },
+    demoWatchId,
   };
+  try {
+    const [tip, server] = await Promise.all([light.getTip(), light.getServerInfo()]);
+    return {
+      ...base,
+      live: true,
+      tipHeight: tip.height as number | null,
+      liveError: null as string | null,
+      server: { vendor: server.vendor, version: server.version, network: server.networkIdentity },
+    };
+  } catch (error) {
+    // Light server unreachable or incompatible (e.g. NU7). Stored scan results remain readable.
+    return { ...base, live: false, tipHeight: null, liveError: errorCode(error), server: null };
+  }
 }
 
 // ---------- watch-only accounts ----------
@@ -122,6 +159,7 @@ async function account(id: string) {
 }
 
 export async function removeWatch(id: string) {
+  if (id === demoWatchId) throw Object.assign(new Error('The demo wallet cannot be removed'), { statusCode: 403 });
   const a = await account(id);
   await syncing?.catch(() => {});
   await wallet.accounts.remove({ accountId: a.id, acknowledge: 'deletes-local-history' });

@@ -1,6 +1,9 @@
 const BASE = import.meta.env.VITE_API_URL ?? '';
 
-export type Health = { network: string; endpoint: string; storage: string; tipHeight: number };
+export type Health = {
+  network: string; endpoint: string; storage: string; demoWatchId: string | null;
+  live: boolean; tipHeight: number | null; liveError: string | null;
+};
 export type Watch = { id: string; label: string; birthdayHeight: number; keyPreview: string | null };
 export type Status = {
   activity: string; scannedHeight: number | null; tipHeight: number | null;

@@ -27,12 +27,16 @@ npm install
 npm run dev       # http://localhost:5173
 ```
 
-### Docker (recommended on macOS/Windows for persistent storage)
+### Docker / hosting (API + web app as one service)
 
 ```sh
 docker build -t zecscope .
-docker run -p 8787:8787 -v zecscope-data:/app/data zecscope
+docker run -p 8787:8787 -v zecscope-data:/app/data zecscope   # open http://localhost:8787
 ```
+
+Optional public demo wallet, auto-imported on boot (use a throwaway wallet, its key becomes public):
+`DEMO_UFVK=uview1…`, `DEMO_LABEL`, `DEMO_BIRTHDAY=<block height>`. With a volume on `/app/data`,
+already-scanned history stays visible even if live scanning stops (for example after NU7).
 
 Without Docker on macOS/Windows, `STORAGE=auto` falls back to in-memory wallet storage:
 everything works, but watched keys are forgotten on restart.

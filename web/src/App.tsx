@@ -50,14 +50,16 @@ function Header({ health }: { health: Health | null }) {
       <nav className="flex items-center gap-4 text-sm text-neutral-400">
         <a href="#/tx" className="hover:text-neutral-100">Tx lookup</a>
         <span className="rounded-full border border-neutral-800 px-2.5 py-1 font-mono text-xs">
-          {health ? `${health.network} · tip ${health.tipHeight.toLocaleString()}` : 'connecting…'}
+          {!health ? 'connecting…'
+            : health.live && health.tipHeight !== null ? `${health.network} · tip ${health.tipHeight.toLocaleString()}`
+              : `${health.network} · live scan paused`}
         </span>
       </nav>
     </header>
   );
 }
 
-function Home({ tip }: { tip: number | null }) {
+function Home({ tip, demoId }: { tip: number | null; demoId: string | null }) {
   const [ufvk, setUfvk] = useState('');
   const [label, setLabel] = useState('');
   const [birthday, setBirthday] = useState('');
@@ -84,6 +86,17 @@ function Home({ tip }: { tip: number | null }) {
           Paste a unified full viewing key. ZecScope scans for incoming payments and memos. It can see, never spend.
         </p>
       </section>
+
+      {demoId && (
+        <a href={`#/w/${demoId}`}
+          className="flex items-center justify-between rounded-xl border border-zec/40 bg-zec/5 px-5 py-4 hover:bg-zec/10">
+          <span>
+            <span className="block font-medium">Try the live demo wallet</span>
+            <span className="text-sm text-neutral-400">Real mainnet payments and memos, scanned with Zcash JS.</span>
+          </span>
+          <span className="text-zec">Open →</span>
+        </a>
+      )}
 
       <section className="space-y-3 rounded-xl border border-neutral-800 p-5">
         <textarea
@@ -124,7 +137,7 @@ function Home({ tip }: { tip: number | null }) {
   );
 }
 
-function Detail({ id }: { id: string }) {
+function Detail({ id, isDemo }: { id: string; isDemo: boolean }) {
   const status = usePoll<Status>(() => api.status(id), 3_000, [id]);
   const balance = usePoll<Balance>(() => api.balance(id), 10_000, [id]);
   const txs = usePoll<Tx[]>(() => api.txs(id), 10_000, [id]);
@@ -196,7 +209,9 @@ function Detail({ id }: { id: string }) {
         )}
       </section>
 
-      <button onClick={remove} className="text-xs text-neutral-500 hover:text-red-400">Stop watching</button>
+      {isDemo
+        ? <p className="text-xs text-neutral-500">Public demo wallet. Paste your own viewing key on the home page to watch yours.</p>
+        : <button onClick={remove} className="text-xs text-neutral-500 hover:text-red-400">Stop watching</button>}
     </div>
   );
 }
@@ -247,9 +262,9 @@ export default function App() {
     <div className="mx-auto max-w-3xl px-4 pb-16">
       <Header health={health} />
       {error && !health && <p className="mb-6 text-sm text-red-400">API unreachable: {error}</p>}
-      {route[0] === 'w' && route[1] ? <Detail id={route[1]} />
+      {route[0] === 'w' && route[1] ? <Detail id={route[1]} isDemo={route[1] === health?.demoWatchId} />
         : route[0] === 'tx' ? <TxLookup initial={route[1]} />
-          : <Home tip={health?.tipHeight ?? null} />}
+          : <Home tip={health?.tipHeight ?? null} demoId={health?.demoWatchId ?? null} />}
     </div>
   );
 }

@@ -1,3 +1,6 @@
+import { existsSync, statSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { extname, join, normalize, resolve } from 'node:path';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { config } from './config.js';
@@ -51,6 +54,25 @@ app.get<{ Params: { txid: string } }>('/api/tx/:txid', async (req, reply) => {
 
 app.post<{ Body: { address?: string } }>('/api/inspect/address', async req =>
   z.inspectAddress(req.body?.address ?? '').catch(e => { throw Object.assign(e, { statusCode: 400 }); }));
+
+// Serve the built web app from the same origin when present (hosted demo: one service, no CORS).
+const webRoot = resolve(config.webDist);
+if (existsSync(join(webRoot, 'index.html'))) {
+  const types: Record<string, string> = {
+    '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css',
+    '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.json': 'application/json',
+    '.woff2': 'font/woff2',
+  };
+  app.get('/*', async (req, reply) => {
+    const path = decodeURIComponent((req.url.split('?')[0] ?? '/'));
+    if (path.startsWith('/api/')) return reply.status(404).send({ error: 'NOT_FOUND', message: 'Unknown API route' });
+    let file = normalize(join(webRoot, path));
+    if (!file.startsWith(webRoot) || !existsSync(file) || !statSync(file).isFile()) file = join(webRoot, 'index.html');
+    reply.type(types[extname(file)] ?? 'application/octet-stream');
+    return reply.send(await readFile(file));
+  });
+  app.log.info(`Serving web app from ${webRoot}`);
+}
 
 await z.init();
 await app.listen({ port: config.port, host: '0.0.0.0' });
