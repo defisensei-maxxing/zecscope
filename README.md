@@ -59,6 +59,7 @@ everything works, but watched keys are forgotten on restart.
 | GET | `/api/watch/:id/status` | scan progress |
 | GET | `/api/watch/:id/balance` | ZEC totals by pool |
 | GET | `/api/watch/:id/txs` | transactions with decoded memos |
+| GET | `/api/watch/:id/address` | Sapling-only receive address derived from the viewing key |
 | DELETE | `/api/watch/:id` | stop watching |
 | POST | `/api/sync` | trigger a scan now |
 | GET | `/api/tx/:txid` | transaction status and (if watched) outputs + memos |

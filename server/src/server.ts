@@ -35,6 +35,7 @@ app.get('/api/watch', async () => z.listWatches());
 
 app.get<{ Params: { id: string } }>('/api/watch/:id/status', async req => z.getStatus(req.params.id));
 app.get<{ Params: { id: string } }>('/api/watch/:id/balance', async req => z.getBalance(req.params.id));
+app.get<{ Params: { id: string } }>('/api/watch/:id/address', async req => z.getReceiveAddress(req.params.id));
 app.get<{ Params: { id: string }; Querystring: { limit?: string } }>('/api/watch/:id/txs', async req =>
   z.listTransactions(req.params.id, Math.min(200, Math.max(1, Number(req.query.limit ?? 50)))));
 

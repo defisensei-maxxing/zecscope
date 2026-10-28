@@ -166,6 +166,16 @@ export async function removeWatch(id: string) {
   keyPreviews.delete(a.id);
 }
 
+/** A unified address with ONLY a Sapling receiver, derived from the viewing key.
+ * Zcash JS 0.1.1 fully decodes Sapling (Orchard is legacy), so payments sent here show amount + memo. */
+export async function getReceiveAddress(id: string) {
+  const a = await account(id);
+  const request = { format: 'unified', transparent: 'omit', sapling: 'require', ironwood: 'omit' } as const;
+  const existing = await wallet.addresses.current({ accountId: a.id, request });
+  const address = existing ?? (await wallet.addresses.next({ accountId: a.id, request })).address;
+  return { address, pool: 'sapling' };
+}
+
 export async function getStatus(id: string) {
   const a = await account(id);
   const s: SyncStatus = await wallet.getSyncStatus();

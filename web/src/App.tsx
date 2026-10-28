@@ -176,6 +176,8 @@ function Detail({ id, isDemo }: { id: string; isDemo: boolean }) {
         )}
       </section>
 
+      <ReceiveAddress id={id} />
+
       <section className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-sm uppercase tracking-wide text-neutral-500">Transactions</h2>
@@ -213,6 +215,24 @@ function Detail({ id, isDemo }: { id: string; isDemo: boolean }) {
         ? <p className="text-xs text-neutral-500">Public demo wallet. Paste your own viewing key on the home page to watch yours.</p>
         : <button onClick={remove} className="text-xs text-neutral-500 hover:text-red-400">Stop watching</button>}
     </div>
+  );
+}
+
+function ReceiveAddress({ id }: { id: string }) {
+  const [address, setAddress] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  useEffect(() => {
+    api.address(id).then(r => setAddress(r.address)).catch(e => setErr((e as Error).message));
+  }, [id]);
+  return (
+    <section className="space-y-2 rounded-xl border border-neutral-800 p-5">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-neutral-500">Send here (Sapling-only address)</p>
+        {address && <Copy text={address} />}
+      </div>
+      <p className="break-all font-mono text-xs text-neutral-300">{address ?? err ?? 'Deriving…'}</p>
+      <p className="text-xs text-neutral-500">Derived from the viewing key. Payments with a memo to this address appear below.</p>
+    </section>
   );
 }
 

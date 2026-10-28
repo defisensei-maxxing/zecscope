@@ -38,6 +38,7 @@ export const api = {
   status: (id: string) => call<Status>(`/api/watch/${id}/status`),
   balance: (id: string) => call<Balance>(`/api/watch/${id}/balance`),
   txs: (id: string) => call<Tx[]>(`/api/watch/${id}/txs`),
+  address: (id: string) => call<{ address: string; pool: string }>(`/api/watch/${id}/address`),
   tx: (txid: string) => call<Record<string, unknown>>(`/api/tx/${txid}`),
   apiUrl: (path: string) => (BASE || window.location.origin) + path,
 };

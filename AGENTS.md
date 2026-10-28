@@ -30,7 +30,7 @@ Paste a UFVK → it scans → shows balance, incoming payments and memos, plus a
 
 ## API
 GET  /api/health · POST /api/watch {ufvk,label,birthdayHeight?} · GET /api/watch
-GET  /api/watch/:id/status · /balance · /txs · DELETE /api/watch/:id
+GET  /api/watch/:id/status · /balance · /txs · /address · DELETE /api/watch/:id
 POST /api/sync · GET /api/tx/:txid · POST /api/inspect/address {address}
 
 ## Status
