@@ -10,9 +10,10 @@ app.setReplySerializer(payload =>
 
 await app.register(cors, { origin: [config.webOrigin, /^http:\/\/localhost:\d+$/] });
 
-app.setErrorHandler((error, _req, reply) => {
-  const status = (error as { statusCode?: number }).statusCode ?? 500;
-  reply.status(status).send({ error: z.errorCode(error), message: error.message });
+app.setErrorHandler((error: unknown, _req, reply) => {
+  const status = (error as { statusCode?: number } | null)?.statusCode ?? 500;
+  const message = error instanceof Error ? error.message : String(error);
+  reply.status(status).send({ error: z.errorCode(error), message });
 });
 
 app.get('/api/health', async () => z.getHealth());

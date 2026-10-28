@@ -24,7 +24,7 @@ export async function init() {
   if (storage.kind === 'node-filesystem') await mkdir(config.dataDir, { recursive: true });
 
   // Component form with no broadcaster and no transactionPolicy: scanning only, spending impossible.
-  wallet = createWalletClient({
+  wallet = await createWalletClient({
     network: light.network,
     light,
     storage,
