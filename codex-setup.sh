@@ -6,8 +6,8 @@ node -v
 (cd server && if [ -f package-lock.json ]; then npm ci; else npm install; fi)
 (cd web && if [ -f package-lock.json ]; then npm ci; else npm install; fi)
 cat >> ~/.bashrc <<'EOF'
-export NETWORK=testnet
-export LIGHTWALLETD_URL=https://testnet.zec.rocks:443
+export NETWORK=mainnet
+export LIGHTWALLETD_URL=https://zec.rocks:443
 export STORAGE=auto
 export DATA_DIR=/tmp/zecscope-data
 export PORT=8787

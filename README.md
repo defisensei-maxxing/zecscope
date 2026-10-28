@@ -18,7 +18,7 @@ Requires Node **22.23.4** (`nvm use`).
 cd server
 cp .env.example .env
 npm install
-npm run probe     # smoke test: prints the testnet tip
+npm run probe     # smoke test: prints the mainnet tip
 npm run dev       # http://localhost:8787
 
 # UI (new terminal)
@@ -39,9 +39,9 @@ everything works, but watched keys are forgotten on restart.
 
 ## Demo flow
 
-1. Create a testnet wallet (e.g. Zashi/Zingo) and copy its UFVK (`uviewtest1…`).
+1. In a Zcash wallet (e.g. Zashi), export the unified full viewing key (`uview1…`).
 2. Paste it into ZecScope and click **Watch**.
-3. Send testnet ZEC with a memo to that wallet.
+3. Send a tiny amount of ZEC (e.g. 0.001) with a memo to that wallet's shielded address.
 4. Watch the payment and memo appear, then `curl localhost:8787/api/watch/<id>/txs`.
 
 ## API
@@ -61,13 +61,18 @@ everything works, but watched keys are forgotten on restart.
 
 ## How it uses Zcash JS
 
-- `createLightClient` connects to lightwalletd (`testnet.zec.rocks`) for tip, server info and tx lookups.
+- `createLightClient` connects to lightwalletd (`zec.rocks`) for tip, server info and tx lookups.
 - `createWalletClient` in read-only component form (no broadcaster, no transaction policy).
 - `wallet.accounts.import({ viewingKey, viewOnly: true, birthday })` with `resolveBirthday`.
 - `wallet.sync`, `getSyncStatus`, `getBalance`, `getHistory`, `getTransaction` for memos.
 - `addresses.decode`, `txId`, `formatZec` for validation and exact amounts.
 
-Details: [`docs/ZCASHJS_API.md`](docs/ZCASHJS_API.md). Zcash JS is an experimental SDK; use testnet.
+Details: [`docs/ZCASHJS_API.md`](docs/ZCASHJS_API.md). Zcash JS is an experimental SDK.
+
+**Network:** ZecScope runs on mainnet. Zcash JS 0.1.1 predates NU7, which testnet activated at
+block 4,465,026, so testnet connections fail with `NETWORK_MISMATCH`. Mainnet activates NU7 on
+5 Nov 2026; after that ZecScope needs a Zcash JS release with NU7 support. Because it only ever
+holds viewing keys, running on mainnet cannot move funds.
 
 ## License
 

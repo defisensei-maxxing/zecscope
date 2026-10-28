@@ -99,7 +99,7 @@ export async function addWatch(args: { ufvk: string; label: string; birthdayHeig
   return toWatch(account, args.ufvk.trim());
 }
 
-const keyPreviews = new Map<string, string>(); // accountId -> "uviewtest1abc…xyz" (never the full key)
+const keyPreviews = new Map<string, string>(); // accountId -> "uview1abc…xyz" (never the full key)
 
 function toWatch(account: AccountRecord, ufvk?: string) {
   if (ufvk) keyPreviews.set(account.id, `${ufvk.slice(0, 14)}…${ufvk.slice(-8)}`);

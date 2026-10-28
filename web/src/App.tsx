@@ -88,7 +88,7 @@ function Home({ tip }: { tip: number | null }) {
       <section className="space-y-3 rounded-xl border border-neutral-800 p-5">
         <textarea
           value={ufvk} onChange={e => setUfvk(e.target.value)} rows={3}
-          placeholder="uviewtest1…"
+          placeholder="uview1…"
           className="w-full resize-none rounded-lg bg-neutral-900 p-3 font-mono text-sm outline-none focus:ring-1 focus:ring-zec"
         />
         <div className="flex flex-wrap gap-3">
@@ -170,7 +170,7 @@ function Detail({ id }: { id: string }) {
         </div>
         {!txs.data?.length ? (
           <p className="rounded-xl border border-dashed border-neutral-800 p-6 text-center text-sm text-neutral-500">
-            Nothing yet. Send testnet ZEC with a memo to this wallet and it will appear here.
+            Nothing yet. Send a small amount of ZEC with a memo to this wallet and it will appear here.
           </p>
         ) : (
           <ul className="divide-y divide-neutral-900 rounded-xl border border-neutral-800">

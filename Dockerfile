@@ -5,8 +5,8 @@ WORKDIR /app/server
 COPY server/package*.json ./
 RUN npm install --omit=dev
 COPY server/ ./
-ENV NETWORK=testnet \
-    LIGHTWALLETD_URL=https://testnet.zec.rocks:443 \
+ENV NETWORK=mainnet \
+    LIGHTWALLETD_URL=https://zec.rocks:443 \
     STORAGE=auto \
     DATA_DIR=/app/data \
     PORT=8787

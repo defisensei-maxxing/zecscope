@@ -12,17 +12,19 @@ Paste a UFVK → it scans → shows balance, incoming payments and memos, plus a
 1. **Never guess the zcash.js API.** Read `docs/ZCASHJS_API.md` first, then confirm against
    `server/node_modules/@zcashlabs/zcash.js/dist/src/index.d.ts`. The `.d.ts` wins.
 2. **All SDK calls live in `server/src/zcash.ts`.** Routes in `server.ts` call its functions.
-3. **Watch-only.** Accept UFVKs only (testnet prefix `uviewtest1`). Reject seeds, spending keys
+3. **Watch-only.** Accept UFVKs only (mainnet prefix `uview1`, testnet `uviewtest1`). Reject seeds, spending keys
    and UIVKs with HTTP 400. Never add a broadcaster, transaction policy, signer, propose or send.
 4. **Never log or return a full viewing key.** Only the `keyPreview` (first 14 + last 8 chars).
 5. **Money is bigint zatoshis** internally; JSON returns ZEC strings via `formatZec`.
-6. **Testnet only** for the hackathon.
-7. If a live testnet call fails because of network/proxy limits in your sandbox, **stop and report**.
+6. **Mainnet by default.** zcash.js 0.1.1 has no NU7 rules, and testnet activated NU7 at block
+   4,465,026, so testnet fails with `NETWORK_MISMATCH`. Mainnet works until its NU7 upgrade on
+   5 Nov 2026. Watch-only means mainnet never risks funds. Do not install unofficial NU7 forks.
+7. If a live light-server call fails because of network/proxy limits in your sandbox, **stop and report**.
    Do not loop on it. The human will run live checks locally in Docker.
 8. Before finishing: `npm run typecheck` in `server/` and `web/` must pass.
 
 ## Commands
-- `cd server && npm run probe`: SDK smoke test (prints testnet tip + server info)
+- `cd server && npm run probe`: SDK smoke test (prints the chain tip + server info)
 - `cd server && npm run dev`: API on :8787
 - `cd web && npm run dev`: UI on :5173 (proxies `/api` to :8787)
 

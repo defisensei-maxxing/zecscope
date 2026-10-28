@@ -5,8 +5,8 @@ if (existsSync('.env')) process.loadEnvFile('.env');
 const storageSetting = (process.env.STORAGE ?? 'auto').toLowerCase();
 
 export const config = {
-  network: (process.env.NETWORK ?? 'testnet') as 'testnet' | 'mainnet',
-  endpoint: process.env.LIGHTWALLETD_URL ?? 'https://testnet.zec.rocks:443',
+  network: (process.env.NETWORK ?? 'mainnet') as 'testnet' | 'mainnet',
+  endpoint: process.env.LIGHTWALLETD_URL ?? 'https://zec.rocks:443',
   // Persistent Node storage needs Linux + flock; memory storage works everywhere.
   storage:
     storageSetting === 'filesystem' || (storageSetting === 'auto' && process.platform === 'linux')
