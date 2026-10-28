@@ -41,7 +41,8 @@ everything works, but watched keys are forgotten on restart.
 
 1. In a Zcash wallet (e.g. Zashi), export the unified full viewing key (`uview1…`).
 2. Paste it into ZecScope and click **Watch**.
-3. Send a tiny amount of ZEC (e.g. 0.001) with a memo to that wallet's shielded address.
+3. Send a tiny amount of ZEC (e.g. 0.001) with a memo to that wallet's **Sapling** address (`zs1…`).
+   Zcash JS 0.1.1 fully decodes Sapling; Orchard funds show only as a legacy balance.
 4. Watch the payment and memo appear, then `curl localhost:8787/api/watch/<id>/txs`.
 
 ## API

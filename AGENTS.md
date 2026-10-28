@@ -34,6 +34,8 @@ GET  /api/watch/:id/status · /balance · /txs · DELETE /api/watch/:id
 POST /api/sync · GET /api/tx/:txid · POST /api/inspect/address {address}
 
 ## Status
-The server and web code were written against the zcash.js 0.1.1 source but have **not yet been
-installed, typechecked or run** (npm was unreachable when the repo was scaffolded).
-First job: install, typecheck, fix any type mismatches, run `npm run probe`.
+- Installs and typechecks in `server/` and `web/`. `npm run probe` reaches mainnet (`zec.rocks:443`).
+- Pools: zcash.js supports **transparent, Sapling, Ironwood**. Ironwood is NOT Orchard; Orchard
+  funds appear only as `unsupportedLegacy: legacyOrchard`. Demo payments should go to a
+  **Sapling** receiver (`zs1…`) so amount and memo are fully decoded.
+- Not yet verified live: UFVK import, sync, history and memos against a real payment.

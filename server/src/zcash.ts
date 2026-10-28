@@ -158,6 +158,10 @@ export async function getBalance(id: string) {
       ironwood: formatZec(b.amounts.ironwood.total),
       sapling: formatZec(b.amounts.sapling.total),
       transparent: formatZec(b.amounts.transparent.regular.total + b.amounts.transparent.coinbase.total),
+      // zcash.js treats Orchard as an unsupported legacy pool (Ironwood is a separate pool).
+      ...(b.amounts.unsupportedLegacy
+        ? { 'orchard (legacy, view only)': formatZec(b.amounts.unsupportedLegacy.balance.total) }
+        : {}),
     },
   };
 }
